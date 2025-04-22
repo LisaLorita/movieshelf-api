@@ -1,0 +1,25 @@
+services:
+  api:
+    build: .
+    container_name: movieshelf-api
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    command: ["npm", "run", "dev"]
+    depends_on:
+      - mongodb
+  
+  mongodb:
+      image: mongo
+      container_name: movieshelf-db
+      restart: always
+      ports:
+        - "27017:27017"
+      volumes:
+        - mongodb-data:/data/db
+
+volumes:
+  mongodb-data:
