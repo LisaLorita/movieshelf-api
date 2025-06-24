@@ -13,11 +13,33 @@ export function validateWithJoi(schema: Joi.ObjectSchema): RequestHandler {
       next();
     } catch (error) {
       if (error instanceof Joi.ValidationError) {
-        const errorMessages = error.details.map(detail => ({
-          message: detail.message.replace(/['"]/g, ''),
-          path: detail.path.join('.'),
-        }));
-        res.status(400).json({ errors: errorMessages });
+        console.log('Validation error occurred for request body');
+        const errorMessages = error.details.map(detail => {
+          const field = detail.path.join('.');
+          let message = '';
+          switch (field) {
+            case 'username':
+              message = 'Username must be 3-20 characters long and contain only letters and numbers';
+              break;
+            case 'email':
+              message = 'Please provide a valid email address';
+              break;
+            case 'password':
+              message = 'Password must be at least 8 characters long and contain uppercase, lowercase, number, and symbol';
+              break;
+            default:
+              message = `Invalid ${field}`;
+          }
+          return {
+            field,
+            message
+          };
+        });
+        res.status(400).json({ 
+          message: 'Validation failed',
+          errors: errorMessages 
+        });
+        return;
       }
       next(error);
     }
