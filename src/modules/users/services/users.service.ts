@@ -1,14 +1,20 @@
-import { CreateUserRequest } from "../dtos/create-user-request.dto";
-import { CreateUserResponse } from "../dtos/create-user-response.dto";
+// import { CreateUserRequest } from "../dtos/create-user-request.dto";
+// import { CreateUserResponse } from "../dtos/create-user-response.dto";
 import User from "../models/user.model";
+import { UserRequest, UserResponse } from "../models/users.types";
 
 class UsersService {
-  async createUser(UserData: CreateUserRequest): Promise<CreateUserResponse> {
+  async createUser(UserData: UserRequest): Promise<UserResponse> {
     try {
       const newUser = new User(UserData);
       const createdUser = await newUser.save();
-      const userResponse = CreateUserResponse.create(createdUser.username, createdUser.email, createdUser.createdAt, createdUser.updatedAt);
-      return userResponse;
+      return {
+        id: createdUser._id.toString(),
+        username: createdUser.username,
+        email: createdUser.email,
+        createdAt: createdUser.createdAt,
+        updatedAt: createdUser.updatedAt,
+      };
     } catch (error) {
       throw({ message: 'Could not create user', error });
     }
