@@ -15,7 +15,15 @@ class UsersService {
         createdAt: createdUser.createdAt,
         updatedAt: createdUser.updatedAt,
       };
-    } catch (error) {
+    } catch (error: any) {
+      if (error.code === 11000 && error.keyPattern) {
+        if (error.keyPattern.email) {
+          throw { status: 409, message: "Email already exists" };
+        }
+        if (error.keyPattern.username) {
+          throw { status: 409, message: "Username already exists" };
+        }
+      }
       throw({ message: 'Could not create user', error });
     }
   }
