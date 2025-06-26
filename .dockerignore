@@ -6,3 +6,6 @@ Dockerfile
 tsconfig.json
 nodemon.json
 .env
+.git
+.gitignore
+docker-compose.yml
